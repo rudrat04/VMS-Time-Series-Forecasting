@@ -1,8 +1,8 @@
- # Forecast Application
+ # VMS Time Series Forecasting
 
-## Web app developed with Streamlit & Prophet
 
-This application is a front end for forecasting using Prophet library. [Application link](https://share.streamlit.io/giandata/forecast-app/forecastapp.py)
+
+This application is a front end for forecasting using Prophet library.
 
 The app structure follow the process of building and evaluating a forecast:
 
@@ -40,12 +40,5 @@ Runs the model with all the combinations possible within the matrix of coefficie
 ### 6. Export results
 
 - Export forecast(.csv) : will generate a link to download the dataframe with predictions and confidence intervals.
-- Export model metrics (.csv): will generate a link to downloa d the dataframe or the cross-validation
+- Export model metrics (.csv): will generate a link to download the dataframe or the cross-validation
 - Export model configuration (.json): will export  the configuration of the model for reproducibility of the results.   
-
-____________
-### Author
-[Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)
-
-
-Last update: 29 April 2021
