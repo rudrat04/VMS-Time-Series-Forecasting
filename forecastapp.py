@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from warnings import filterwarnings
+from PIL import Image
+from io import BytesIO
 filterwarnings("ignore")
 
 
@@ -380,12 +382,43 @@ if page == "Application":
                         st.dataframe(forecast)
                         fig1 = m.plot(forecast)
                         st.write(fig1)
+                        def save_plot_to_bytes(fig):
+                            img_bytes = BytesIO()
+                            fig.savefig(img_bytes, format='png')
+                            img_bytes.seek(0)
+                            return img_bytes
+
+                        img_bytes = save_plot_to_bytes(fig1)
+
+                        def get_download_link(img_bytes, filename, text):
+                            encoded = base64.b64encode(img_bytes.read()).decode()
+                            href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">{text}</a>'
+                            return href
+
+                        
+                        if st.button('Download Plot'):
+                            st.markdown(get_download_link(img_bytes, 'forecast_plot.png', 'Click here to download'), unsafe_allow_html=True)
                         output = 1
 
                         if growth == 'linear':
                             fig2 = m.plot(forecast)
                             a = add_changepoints_to_plot(fig2.gca(), m, forecast)
                             st.write(fig2)
+                            def save_plot_to_bytes(fig):
+                                img_bytes = BytesIO()
+                                fig.savefig(img_bytes, format='png')
+                                img_bytes.seek(0)
+                                return img_bytes
+
+                        img_bytes_2 = save_plot_to_bytes(fig2)
+                        
+                        def get_download_link(img_bytes, filename, text):
+                            encoded = base64.b64encode(img_bytes.read()).decode()
+                            href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">{text}</a>'
+                            return href
+                        if st.button('Download Linear Graph'):
+                            
+                            st.markdown(get_download_link(img_bytes_2, 'lineargraph.png', 'Click here to download'), unsafe_allow_html=True)
                             output = 1
                 except:
                     st.warning("You need to train the model first.. ")
@@ -396,6 +429,21 @@ if page == "Application":
                     with st.spinner("Loading.."):
                         fig3 = m.plot_components(forecast)
                         st.write(fig3)
+                        def save_plot_to_bytes(fig):
+                            img_bytes = BytesIO()
+                            fig.savefig(img_bytes, format='png')
+                            img_bytes.seek(0)
+                            return img_bytes
+
+                        img_bytes_1 = save_plot_to_bytes(fig3)
+                        
+                        def get_download_link(img_bytes, filename, text):
+                            encoded = base64.b64encode(img_bytes.read()).decode()
+                            href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">{text}</a>'
+                            return href
+                        if st.button('Download Component Plot'):
+                            
+                            st.markdown(get_download_link(img_bytes_1, 'components.png', 'Click here to download'), unsafe_allow_html=True)
                 except: 
                     st.warning("Requires forecast generation..") 
         
@@ -460,6 +508,21 @@ if page == "Application":
                                 if selected_metric != metrics[0]:
                                     fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
                                     st.write(fig4)
+                                    def save_plot_to_bytes(fig):
+                                        img_bytes = BytesIO()
+                                        fig.savefig(img_bytes, format='png')
+                                        img_bytes.seek(0)
+                                        return img_bytes
+
+                                    img_bytes_4 = save_plot_to_bytes(fig4)
+                        
+                                    def get_download_link(img_bytes, filename, text):
+                                        encoded = base64.b64encode(img_bytes.read()).decode()
+                                        href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">{text}</a>'
+                                        return href
+                                    if st.button('Download Metric Graph'):
+                                        st.markdown(get_download_link(img_bytes_4, 'metricgraph.png', 'Click here to download'), unsafe_allow_html=True)
+                                        output = 1
                                     
                         
             else:
@@ -549,7 +612,7 @@ if page == "Application":
             
                 with col2:
                     
-                    if st.button("Export model metrics (.csv)"):
+                    if st.button("Metric Graph"):
                         try:
                             df_p = df_p.to_csv(decimal=',')
                             b64 = base64.b64encode(df_p.encode()).decode()
