@@ -593,7 +593,7 @@ if page == "Application":
         
         if input:
             if output == 1:
-                col1, col2, col3, col4 = st.columns(4)
+                col1, col2, col3 = st.columns(3)
 
                 with col1:
                     
@@ -610,25 +610,15 @@ if page == "Application":
                         
                             st.markdown(href, unsafe_allow_html=True)
             
-                with col2:
-                    
-                    if st.button("Metric Graph"):
-                        try:
-                            df_p = df_p.to_csv(decimal=',')
-                            b64 = base64.b64encode(df_p.encode()).decode()
-                            href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
-                            st.markdown(href, unsafe_allow_html=True)
-                        except:
-                            st.write("No metrics to export")
 
-                with col3:
+                with col2:
                     if st.button('Save model configuration (.json) in memory'):
                         with open('serialized_model.json', 'w') as fout:
                             json.dump(model_to_json(m), fout)
                             
                     
 
-                with col4:
+                with col3:
                     if st.button('Clear cache memory please'):
                         st.cache_data.clear()
 
