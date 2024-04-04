@@ -17,15 +17,17 @@ from prophet.diagnostics import performance_metrics
 import json
 from prophet.serialize import model_to_json, model_from_json
 import holidays
-
+import plotly.express as px
 import altair as alt
 import plotly as plt
 import plotly.offline as pyoff
 import plotly.graph_objs as go
 import plotly.figure_factory as ff
+import plotly.io as pio
 import base64
 import itertools
 from datetime import datetime
+from dateutil import parser
 import json
 
 st.set_page_config(page_title =" VMS Time Series Forecasting",
@@ -284,26 +286,31 @@ if page == "Application":
             
             
         with st.expander('Holidays'):
+            def extract_year_from_datetime_column(datetime_column):
+                """
+                Extracts the year from each date in a datetime column.
+
+                Args:
+                - datetime_column: A list or array-like object containing datetime strings.
+
+                Returns:
+                - A list containing the extracted years.
+                """
+                years = set()
+                for date_str in datetime_column:
+                    parsed_date = parser.parse(date_str)
+                    years.add(parsed_date.year)
+                return list(years)
             
-            countries = ['Country name','Italy','Spain','United States','France','Germany','Ukraine']
+            countries = ['Country name','India','France','Germany','Ukraine']
             
             with st.container():
-                years=[2021]
+                years = extract_year_from_datetime_column(df.iloc[:, 0])
                 selected_country = st.selectbox(label="Select country",options=countries)
 
-                if selected_country == 'Italy':
-                    for date, name in sorted(holidays.IT(years=years).items()):
-                        st.write(date,name) 
-                            
-                if selected_country == 'Spain':
-                    
-                    for date, name in sorted(holidays.ES(years=years).items()):
-                            st.write(date,name)                      
-
-                if selected_country == 'United States':
-                    
-                    for date, name in sorted(holidays.US(years=years).items()):
-                            st.write(date,name)
+                if selected_country == 'India':
+                    for date, name in sorted(holidays.IN(years=years).items()):
+                        st.write(date,name)                           
                             
                 if selected_country == 'France':
                     
@@ -377,7 +384,7 @@ if page == "Application":
                 try:
                     with st.spinner("Forecasting.."):
 
-                        forecast = m.predict(future)
+                        forecast = m.predict(future).tail(periods_input)
                         st.success('Prediction generated successfully')
                         st.dataframe(forecast)
                         fig1 = m.plot(forecast)
@@ -394,11 +401,12 @@ if page == "Application":
                             encoded = base64.b64encode(img_bytes.read()).decode()
                             href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">{text}</a>'
                             return href
-
+                        
+                
                         
                         if st.button('Download Plot'):
                             st.markdown(get_download_link(img_bytes, 'forecast_plot.png', 'Click here to download'), unsafe_allow_html=True)
-                        output = 1
+                        output = 1 
 
                         if growth == 'linear':
                             fig2 = m.plot(forecast)
